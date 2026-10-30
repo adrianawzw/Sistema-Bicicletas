@@ -1,6 +1,14 @@
 #include "Estacion.h"
 
 // imp del constructor
+Estacion::Estacion() {
+    codigo = "";
+    nombre = "";
+    barrio = "";
+    capacidadAnclajes = 0;
+    bicisDisponibles = 0;
+}
+
 Estacion::Estacion(std::string cod, std::string nom, std::string bar, int cap, int bicis) {
     codigo = cod;
     nombre = nom;
