@@ -12,6 +12,7 @@ private:
     int bicisDisponibles;
 
 public:
+    Estacion();
     // Constructor
     Estacion(std::string cod, std::string nom, std::string bar, int cap, int bicis);
 
