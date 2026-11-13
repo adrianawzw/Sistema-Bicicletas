@@ -24,7 +24,7 @@ Bicicleta::Bicicleta(int id, const std::string& codEstacion,
     }
 
     if (estadoBici != "OK" && estadoBici != "Averiada") {
-        estado = "Averiada"; // o "OK", como prefieras
+        estado = "Averiada"; 
     } else {
         estado = estadoBici;
     }
