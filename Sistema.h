@@ -11,14 +11,29 @@ private:
     TablaHash tablaEstaciones;
     GrafoCiclovias grafoRed; // ciclovias modulo A
     ArbolBicicletas arbolBicis; // arbol de bicicletas modulo B
-    void menuBicicletas(); // menu para el arbol de bicicletas
+
+    // submenus
+    void menuEstaciones();   // tabla hash + grafo
+    void menuBicicletas();   // arbol de bicicletas
+
+    // opciones del Menu Estaciones
+    void mostrarEstacion();
+    void agregarEstacion();
+    void eliminarEstacion();
+    void caminoMinimo();
+    void mostrarEstadisticasHash();
+
+    // opciones del Menu Bicicletas
+    void insertarBicicleta();
+    void buscarBicicleta();
+    void eliminarBicicleta();
 
 public:
     Sistema();
     ~Sistema();
 
-    void cargarDatos();    // lectura de estaciones.txt
-    void ejecutarMenu();   // las opciones por consola
+    void cargarDatos();    // lectura de estaciones.txt, ciclovias.txt y bicicletas.txt
+    void ejecutarMenu();   // Menu Principal
 };
 
 #endif

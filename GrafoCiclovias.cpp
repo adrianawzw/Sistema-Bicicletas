@@ -41,9 +41,14 @@ NodoGrafo* GrafoCiclovias::agregarVertice(const std::string& codigo) {
 }
 
 void GrafoCiclovias::agregarCiclovia(const std::string& estacionA, const std::string& estacionB) {
+    // invariante: sin lazos y sin aristas repetidas
+    if (estacionA == estacionB) return;
+    if (existeCiclovia(estacionA, estacionB)) return;
+
     NodoGrafo* verticeA = agregarVertice(estacionA);
     NodoGrafo* verticeB = agregarVertice(estacionB);
 
+    // se agrega en ambos sentidos
     NodoAdyacencia* nuevoAdyA = new NodoAdyacencia(estacionB);
     nuevoAdyA->siguiente = verticeA->listaAdyacencia;
     verticeA->listaAdyacencia = nuevoAdyA;
@@ -76,12 +81,12 @@ void GrafoCiclovias::encontrarCaminoMasCorto(const std::string& origen, const st
     NodoGrafo* vDestino = buscarVertice(destino);
 
     if (vOrigen == nullptr || vDestino == nullptr) {
-        std::cout << "Error: La estación de origen o destino no existe en el grafo de ciclovias." << std::endl;
+        std::cout << "Error: La estacion de origen o destino no existe en el grafo de ciclovias." << std::endl;
         return;
     }
 
     if (origen == destino) {
-        std::cout << "La estación de origen y destino son la misma. Tramos: 0" << std::endl;
+        std::cout << "La estacion de origen y destino son la misma. Tramos: 0" << std::endl;
         return;
     }
 
@@ -151,4 +156,16 @@ void GrafoCiclovias::encontrarCaminoMasCorto(const std::string& origen, const st
         visitados = visitados->siguiente;
         delete temp;
     }
+}
+
+bool GrafoCiclovias::existeCiclovia(const std::string& estacionA, const std::string& estacionB) const {
+    NodoGrafo* vA = buscarVertice(estacionA);
+    if (vA == nullptr) return false;
+
+    NodoAdyacencia* ady = vA->listaAdyacencia;
+    while (ady != nullptr) {
+        if (ady->destinoCodigo == estacionB) return true;
+        ady = ady->siguiente;
+    }
+    return false;
 }

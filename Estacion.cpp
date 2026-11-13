@@ -13,7 +13,13 @@ Estacion::Estacion(std::string cod, std::string nom, std::string bar, int cap, i
     codigo = cod;
     nombre = nom;
     barrio = bar;
+
+    // se ajustan los valores para que se cumpla el invariante
+    if (cap < 0) cap = 0;
     capacidadAnclajes = cap;
+
+    if (bicis < 0) bicis = 0;
+    if (bicis > capacidadAnclajes) bicis = capacidadAnclajes;
     bicisDisponibles = bicis;
 }
 
@@ -38,7 +44,9 @@ int Estacion::getBicisDisponibles() const {
     return bicisDisponibles;
 }
 
-// metodo setter
+// metodo setter: nunca deja la estacion fuera de [0, capacidadAnclajes]
 void Estacion::setBicisDisponibles(int bicis) {
+    if (bicis < 0) bicis = 0;
+    if (bicis > capacidadAnclajes) bicis = capacidadAnclajes;
     bicisDisponibles = bicis;
 }
