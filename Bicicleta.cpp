@@ -17,6 +17,8 @@ Bicicleta::Bicicleta(int id, const std::string& codEstacion,
     kilometros = km;
 
     // --- INVARIANTES ---
+    // kilometros >= 0 (antes solo lo controlaba el setter, el constructor no)
+    kilometros = (km < 0) ? 0 : km;
     if (tipoBici != "Mecanica" && tipoBici != "Electrica") {
         tipo = "Mecanica";
     } else {

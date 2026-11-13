@@ -24,6 +24,7 @@ private:
 
     NodoGrafo* buscarVertice(const std::string& codigo) const;
     NodoGrafo* agregarVertice(const std::string& codigo);
+    bool existeCiclovia(const std::string& estacionA, const std::string& estacionB) const;
 
 public:
     GrafoCiclovias();

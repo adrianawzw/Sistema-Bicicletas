@@ -15,7 +15,7 @@ private:
     int funcionHash(const std::string& clave) const;
 
 public:
-    TablaHash(int cap = 101);
+    TablaHash(int cap = 101);   // si cap <= 0 se usa 101
     ~TablaHash();
 
     void insertar(const std::string& clave, const Estacion& estacion);

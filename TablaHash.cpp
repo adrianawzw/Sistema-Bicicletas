@@ -2,7 +2,7 @@
 #include <iostream>
 
 TablaHash::TablaHash(int cap) {
-    capacidad = cap;
+    capacidad = (cap > 0) ? cap : 101;   // invariante: capacidad > 0
     tamanoActual = 0;
     colisiones = 0;
     tabla = new NodoHash*[capacidad];
@@ -94,6 +94,10 @@ bool TablaHash::eliminar(const std::string& clave) {
             }
             delete actual;
             tamanoActual--;
+            // si el balde sigue ocupado, el nodo eliminado era una colision
+            if (tabla[indice] != nullptr) {
+                colisiones--;
+            }
             return true; // eliminado
         }
         anterior = actual;
