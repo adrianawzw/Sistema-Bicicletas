@@ -5,6 +5,7 @@
 #include "TablaHash.h" // tabla hash para almacenar estaciones
 #include "GrafoCiclovias.h" // grafo para representar ciclovías
 #include "ArbolBicicletas.h" // arbol para almacenar bicicletas
+#include "Redistribuidor.h"
 
 class Sistema {
 private:
@@ -27,6 +28,8 @@ private:
     void insertarBicicleta();
     void buscarBicicleta();
     void eliminarBicicleta();
+
+    void menuRedistribucion(); // Nueva opción
 
 public:
     Sistema();

@@ -58,6 +58,7 @@ void Sistema::ejecutarMenu() {
         std::cout << "\nMENU PRINCIPAL\n";
         std::cout << "1. Menu Estaciones\n";
         std::cout << "2. Menu Bicicletas\n";
+        std::cout << "3. Menu Redistribucion\n"; 
         std::cout << "0. Salir\n";
         std::cout << "Opcion: ";
         std::cin >> opcion;
@@ -69,6 +70,10 @@ void Sistema::ejecutarMenu() {
 
             case 2:
                 menuBicicletas();
+                break;
+
+            case 3:
+                menuRedistribucion();
                 break;
 
             case 0:
@@ -287,4 +292,36 @@ void Sistema::eliminarBicicleta() {
     } else {
         std::cout << "No existe esa bicicleta.\n";
     }
+}
+
+// MENU Redistribucion 
+void Sistema::menuRedistribucion() {
+    int C;
+    std::cout << "\nREDISTRIBUCION DE BICICLETAS\n";
+    std::cout << "Ingrese la capacidad del camion: ";
+    std::cin >> C;
+
+    int n;
+    std::cout << "Ingrese la cantidad de estaciones con faltante: ";
+    std::cin >> n;
+
+    if (n <= 0) {
+        std::cout << "Cantidad invalida.\n";
+        return;
+    }
+
+    FaltanteEstacion* estaciones = new FaltanteEstacion[n];
+    
+    for (int i = 0; i < n; i++) {
+        std::cout << "Estacion " << (i + 1) << " - Codigo: ";
+        std::cin >> estaciones[i].codigo;
+        std::cout << "Estacion " << (i + 1) << " - Faltante: ";
+        std::cin >> estaciones[i].faltante;
+    }
+    Redistribuidor redistribuidor(C);
+    
+    redistribuidor.buscarSubconjuntos(estaciones, n);
+
+    // Limpiamos memoria
+    delete[] estaciones;
 }
