@@ -216,7 +216,15 @@ void Sistema::menuBicicletas() {
         std::cout << "6. Eliminar por ID\n";
         std::cout << "0. Volver al Menu Principal\n";
         std::cout << "Opcion: ";
-        std::cin >> opcion;
+        // Validación de entrada para evitar errores al ingresar letras
+        if (!(std::cin >> opcion)) {
+            std::cin.clear();
+            std::cin.ignore(10000, '\n');
+            std::cout << "Error: Ingrese un numero valido.\n";
+            opcion = -1; // Reiniciamos la opción para que el bucle continúe
+            continue; // Vuelve a pedir la opcion
+        }
+        std::cin.ignore(10000, '\n');
 
         switch (opcion) {
             case 1:
@@ -252,16 +260,31 @@ void Sistema::menuBicicletas() {
     }
 }
 
-// ops menu bicicletas
+
+// ops menu bicicletas areglado con invariantes
 void Sistema::insertarBicicleta() {
     int id, km;
     std::string cod, tipo, estado;
 
-    std::cout << "ID (numero): "; std::cin >> id;
+    std::cout << "ID (numero): "; 
+    if (!(std::cin >> id)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: El ID debe ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
+
     std::cout << "Estacion: "; std::cin >> cod;
     std::cout << "Tipo (Mecanica/Electrica): "; std::cin >> tipo;
     std::cout << "Estado (OK/Averiada): "; std::cin >> estado;
-    std::cout << "Kilometros (numero): "; std::cin >> km;
+    
+    std::cout << "Kilometros (numero): "; 
+    if (!(std::cin >> km)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: Los km deben ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
 
     Bicicleta b(id, cod, tipo, estado, km);
     if (arbolBicis.insertar(b)) {
@@ -273,7 +296,13 @@ void Sistema::insertarBicicleta() {
 
 void Sistema::buscarBicicleta() {
     int id;
-    std::cout << "ID a buscar: "; std::cin >> id;
+    std::cout << "ID a buscar: "; 
+    if (!(std::cin >> id)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: El ID debe ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
 
     const Bicicleta* b = arbolBicis.buscar(id);
     if (b != nullptr) {
@@ -285,7 +314,13 @@ void Sistema::buscarBicicleta() {
 
 void Sistema::eliminarBicicleta() {
     int id;
-    std::cout << "ID a eliminar: "; std::cin >> id;
+    std::cout << "ID a eliminar: "; 
+    if (!(std::cin >> id)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: El ID debe ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
 
     if (arbolBicis.eliminar(id)) {
         std::cout << "Bicicleta eliminada.\n";
@@ -315,8 +350,17 @@ void Sistema::menuRedistribucion() {
     for (int i = 0; i < n; i++) {
         std::cout << "Estacion " << (i + 1) << " - Codigo: ";
         std::cin >> estaciones[i].codigo;
-        std::cout << "Estacion " << (i + 1) << " - Faltante: ";
-        std::cin >> estaciones[i].faltante;
+
+        // --- VALIDACIÓN DEL INVARIANTE ---
+        do {
+            std::cout << "Estacion " << (i + 1) << " - Faltante (debe ser >= 0): ";
+            std::cin >> estaciones[i].faltante;
+            if (estaciones[i].faltante < 0) {
+                std::cout << "Error: El faltante no puede ser negativo.\n";
+            }
+        } while (estaciones[i].faltante < 0);
+        // ---------------------------------
+        
     }
     Redistribuidor redistribuidor(C);
     
