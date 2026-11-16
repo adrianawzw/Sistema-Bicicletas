@@ -3,22 +3,30 @@
 #include <fstream>
 #include "Estacion.h"
 
-Sistema::Sistema() : tablaEstaciones(101) {
+Sistema::Sistema() : tablaEstaciones(101)
+{
 }
 
-Sistema::~Sistema() {
+Sistema::~Sistema()
+{
 }
 
-void Sistema::cargarDatos() {
+void Sistema::cargarDatos()
+{
     std::ifstream archivo("estaciones.txt");
-    if (!archivo.is_open()) {
+    if (!archivo.is_open())
+    {
         std::cerr << "Error! No se pudo abrir estaciones.txt\n";
-    } else {
+    }
+    else
+    {
         std::string codigo, nombre, barrio;
         int cap, bicis;
         int cargadas = 0;
-        while (archivo >> codigo >> nombre >> barrio >> cap >> bicis) {
-            if (tablaEstaciones.buscar(codigo) == nullptr) {
+        while (archivo >> codigo >> nombre >> barrio >> cap >> bicis)
+        {
+            if (tablaEstaciones.buscar(codigo) == nullptr)
+            {
                 Estacion nueva(codigo, nombre, barrio, cap, bicis);
                 tablaEstaciones.insertar(codigo, nueva);
                 cargadas++;
@@ -30,67 +38,85 @@ void Sistema::cargarDatos() {
 
     grafoRed.cargarCicloviasDesdeArchivo("ciclovias.txt");
 
-    //Cargar bicicletas desde archivo bicicletas.txt
+    // Cargar bicicletas desde archivo bicicletas.txt
     std::ifstream archivoBicis("bicicletas.txt");
-    if (archivoBicis.is_open()) {
+    if (archivoBicis.is_open())
+    {
         int id, km;
         std::string codEst, tipo, estado;
         int cargadasBicis = 0;
 
-        while (archivoBicis >> id >> codEst >> tipo >> estado >> km) {
+        while (archivoBicis >> id >> codEst >> tipo >> estado >> km)
+        {
             Bicicleta b(id, codEst, tipo, estado, km);
-            if (arbolBicis.insertar(b)) {
+            if (arbolBicis.insertar(b))
+            {
                 cargadasBicis++;
             }
         }
         archivoBicis.close();
         std::cout << "Bicicletas cargadas: " << cargadasBicis << "\n";
-    } else {
+    }
+    else
+    {
         std::cerr << "Error! No se pudo abrir bicicletas.txt\n";
     }
+
+    // cargar viajes
+    listaViajes.cargarDesdeArchivo("viajes.txt");
 }
 
 // menu principal
-void Sistema::ejecutarMenu() {
+void Sistema::ejecutarMenu()
+{
     int opcion = -1;
 
-    while (opcion != 0) {
+    while (opcion != 0)
+    {
         std::cout << "\nMENU PRINCIPAL\n";
         std::cout << "1. Menu Estaciones\n";
         std::cout << "2. Menu Bicicletas\n";
-        std::cout << "3. Menu Redistribucion\n"; 
+        std::cout << "3. Menu Redistribucion\n";
+        std::cout << "4. Menu Viajes\n";
         std::cout << "0. Salir\n";
         std::cout << "Opcion: ";
         std::cin >> opcion;
 
-        switch (opcion) {
-            case 1:
-                menuEstaciones();
-                break;
+        switch (opcion)
+        {
+        case 1:
+            menuEstaciones();
+            break;
 
-            case 2:
-                menuBicicletas();
-                break;
+        case 2:
+            menuBicicletas();
+            break;
 
-            case 3:
-                menuRedistribucion();
-                break;
+        case 3:
+            menuRedistribucion();
+            break;
 
-            case 0:
-                std::cout << "Saliendo...\n";
-                break;
+        case 4:
+            menuViajes();
+            break;
 
-            default:
-                std::cout << "Opcion invalida!\n";
+        case 0:
+            std::cout << "Saliendo...\n";
+            break;
+
+        default:
+            std::cout << "Opcion invalida!\n";
         }
     }
 }
 
 // MENU ESTACIONES (tabla hash + grafo de ciclovias)
-void Sistema::menuEstaciones() {
+void Sistema::menuEstaciones()
+{
     int opcion = -1;
 
-    while (opcion != 0) {
+    while (opcion != 0)
+    {
         std::cout << "\nMENU ESTACIONES\n";
         std::cout << "1. Mostrar estacion por codigo\n";
         std::cout << "2. Agregar estacion\n";
@@ -104,56 +130,61 @@ void Sistema::menuEstaciones() {
         std::cout << "Opcion: ";
         std::cin >> opcion;
 
-        switch (opcion) {
-            case 1:
-                mostrarEstacion();
-                break;
+        switch (opcion)
+        {
+        case 1:
+            mostrarEstacion();
+            break;
 
-            case 2:
-                agregarEstacion();
-                break;
+        case 2:
+            agregarEstacion();
+            break;
 
-            case 3:
-                eliminarEstacion();
-                break;
+        case 3:
+            eliminarEstacion();
+            break;
 
-            case 4:
-                tablaEstaciones.ordenarYMostrarPorCapacidad();
-                break;
+        case 4:
+            tablaEstaciones.ordenarYMostrarPorCapacidad();
+            break;
 
-            case 5:
-                tablaEstaciones.ordenarYMostrarPorBicisDisponibles();
-                break;
+        case 5:
+            tablaEstaciones.ordenarYMostrarPorBicisDisponibles();
+            break;
 
-            case 6:
-                tablaEstaciones.filtrarMenor20PorcientoOcupacion();
-                break;
+        case 6:
+            tablaEstaciones.filtrarMenor20PorcientoOcupacion();
+            break;
 
-            case 7:
-                caminoMinimo();
-                break;
+        case 7:
+            caminoMinimo();
+            break;
 
-            case 8:
-                mostrarEstadisticasHash();
-                break;
+        case 8:
+            mostrarEstadisticasHash();
+            break;
 
-            case 0:
-                break;
-            default:
-                std::cout << "Opcion invalida!\n";
+        case 0:
+            break;
+        default:
+            std::cout << "Opcion invalida!\n";
         }
     }
 }
 
 // ops menu estaciones
-void Sistema::mostrarEstacion() {
+void Sistema::mostrarEstacion()
+{
     std::string codigo;
     std::cout << "Codigo: ";
     std::cin >> codigo;
-    Estacion* e = tablaEstaciones.buscar(codigo);
-    if (e == nullptr) {
+    Estacion *e = tablaEstaciones.buscar(codigo);
+    if (e == nullptr)
+    {
         std::cout << "No existe esa estacion.\n";
-    } else {
+    }
+    else
+    {
         std::cout << "Codigo: " << e->getCodigo() << "\n";
         std::cout << "Nombre: " << e->getNombre() << "\n";
         std::cout << "Barrio: " << e->getBarrio() << "\n";
@@ -162,51 +193,68 @@ void Sistema::mostrarEstacion() {
     }
 }
 
-void Sistema::agregarEstacion() {
+void Sistema::agregarEstacion()
+{
     std::string codigo, nombre, barrio;
     int cap, bicis;
-    std::cout << "Codigo: "; std::cin >> codigo;
-    if (tablaEstaciones.buscar(codigo) != nullptr) {
+    std::cout << "Codigo: ";
+    std::cin >> codigo;
+    if (tablaEstaciones.buscar(codigo) != nullptr)
+    {
         std::cout << "Ya existe esa estacion.\n";
         return;
     }
-    std::cout << "Nombre: "; std::cin >> nombre;
-    std::cout << "Barrio: "; std::cin >> barrio;
-    std::cout << "Capacidad: "; std::cin >> cap;
-    std::cout << "Bicis: "; std::cin >> bicis;
+    std::cout << "Nombre: ";
+    std::cin >> nombre;
+    std::cout << "Barrio: ";
+    std::cin >> barrio;
+    std::cout << "Capacidad: ";
+    std::cin >> cap;
+    std::cout << "Bicis: ";
+    std::cin >> bicis;
     Estacion nueva(codigo, nombre, barrio, cap, bicis);
     tablaEstaciones.insertar(codigo, nueva);
     std::cout << "Estacion agregada!\n";
 }
 
-void Sistema::eliminarEstacion() {
+void Sistema::eliminarEstacion()
+{
     std::string codigo;
     std::cout << "Codigo a eliminar: ";
     std::cin >> codigo;
-    if (tablaEstaciones.eliminar(codigo)) {
+    if (tablaEstaciones.eliminar(codigo))
+    {
         std::cout << "Estacion eliminada!\n";
-    } else {
+    }
+    else
+    {
         std::cout << "No existe esa estacion\n";
     }
 }
 
-void Sistema::caminoMinimo() {
+void Sistema::caminoMinimo()
+{
     std::string origen, destino;
-    std::cout << "Origen: "; std::cin >> origen;
-    std::cout << "Destino: "; std::cin >> destino;
+    std::cout << "Origen: ";
+    std::cin >> origen;
+    std::cout << "Destino: ";
+    std::cin >> destino;
     grafoRed.encontrarCaminoMasCorto(origen, destino);
 }
 
-void Sistema::mostrarEstadisticasHash() {
+void Sistema::mostrarEstadisticasHash()
+{
     std::cout << "Colisiones: " << tablaEstaciones.getColisiones() << "\n";
     std::cout << "Factor de carga: " << tablaEstaciones.getFactorCarga() << "\n";
 }
 
 // MENU BICICLETAS (arbol binario de busqueda)
-void Sistema::menuBicicletas() {
+void Sistema::menuBicicletas()
+{
     int opcion = -1;
 
-    while (opcion != 0) {
+    while (opcion != 0)
+    {
         std::cout << "\nMENU BICICLETAS (ABB)\n";
         std::cout << "1. Insertar bicicleta\n";
         std::cout << "2. Buscar por ID\n";
@@ -216,121 +264,325 @@ void Sistema::menuBicicletas() {
         std::cout << "6. Eliminar por ID\n";
         std::cout << "0. Volver al Menu Principal\n";
         std::cout << "Opcion: ";
-        // Validación de entrada para evitar errores al ingresar letras
-        if (!(std::cin >> opcion)) {
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
-            std::cout << "Error: Ingrese un numero valido.\n";
-            opcion = -1; // Reiniciamos la opción para que el bucle continúe
-            continue; // Vuelve a pedir la opcion
-        }
-        std::cin.ignore(10000, '\n');
+        std::cin >> opcion;
 
-        switch (opcion) {
-            case 1:
-                insertarBicicleta();
-                break;
+        switch (opcion)
+        {
+        case 1:
+            insertarBicicleta();
+            break;
 
-            case 2:
-                buscarBicicleta();
-                break;
+        case 2:
+            buscarBicicleta();
+            break;
 
-            case 3:
-                arbolBicis.listarInorder();
-                break;
+        case 3:
+            arbolBicis.listarInorder();
+            break;
 
-            case 4:
-                std::cout << "Bicicletas averiadas: " << arbolBicis.contarAveriadas() << "\n";
-                break;
+        case 4:
+            std::cout << "Bicicletas averiadas: " << arbolBicis.contarAveriadas() << "\n";
+            break;
 
-            case 5:
-                std::cout << "Altura del arbol: " << arbolBicis.altura() << "\n";
-                break;
+        case 5:
+            std::cout << "Altura del arbol: " << arbolBicis.altura() << "\n";
+            break;
 
-            case 6:
-                eliminarBicicleta();
-                break;
+        case 6:
+            eliminarBicicleta();
+            break;
 
-            case 0:
-                break;
+        case 0:
+            break;
 
-            default:
-                std::cout << "Opcion invalida!\n";
+        default:
+            std::cout << "Opcion invalida!\n";
         }
     }
 }
 
-
-// ops menu bicicletas areglado con invariantes
-void Sistema::insertarBicicleta() {
+// ops menu bicicletas
+void Sistema::insertarBicicleta()
+{
     int id, km;
     std::string cod, tipo, estado;
 
-    std::cout << "ID (numero): "; 
-    if (!(std::cin >> id)) {
-        std::cin.clear(); std::cin.ignore(10000, '\n');
-        std::cout << "Error: El ID debe ser un numero.\n";
-        return;
-    }
-    std::cin.ignore(10000, '\n');
-
-    std::cout << "Estacion: "; std::cin >> cod;
-    std::cout << "Tipo (Mecanica/Electrica): "; std::cin >> tipo;
-    std::cout << "Estado (OK/Averiada): "; std::cin >> estado;
-    
-    std::cout << "Kilometros (numero): "; 
-    if (!(std::cin >> km)) {
-        std::cin.clear(); std::cin.ignore(10000, '\n');
-        std::cout << "Error: Los km deben ser un numero.\n";
-        return;
-    }
-    std::cin.ignore(10000, '\n');
+    std::cout << "ID (numero): ";
+    std::cin >> id;
+    std::cout << "Estacion: ";
+    std::cin >> cod;
+    std::cout << "Tipo (Mecanica/Electrica): ";
+    std::cin >> tipo;
+    std::cout << "Estado (OK/Averiada): ";
+    std::cin >> estado;
+    std::cout << "Kilometros (numero): ";
+    std::cin >> km;
 
     Bicicleta b(id, cod, tipo, estado, km);
-    if (arbolBicis.insertar(b)) {
+    if (arbolBicis.insertar(b))
+    {
         std::cout << "Bicicleta insertada.\n";
-    } else {
+    }
+    else
+    {
         std::cout << "Ya existe una bicicleta con ese ID.\n";
     }
 }
 
-void Sistema::buscarBicicleta() {
+void Sistema::buscarBicicleta()
+{
     int id;
-    std::cout << "ID a buscar: "; 
-    if (!(std::cin >> id)) {
-        std::cin.clear(); std::cin.ignore(10000, '\n');
-        std::cout << "Error: El ID debe ser un numero.\n";
-        return;
-    }
-    std::cin.ignore(10000, '\n');
+    std::cout << "ID a buscar: ";
+    std::cin >> id;
 
-    const Bicicleta* b = arbolBicis.buscar(id);
-    if (b != nullptr) {
+    const Bicicleta *b = arbolBicis.buscar(id);
+    if (b != nullptr)
+    {
         b->mostrar();
-    } else {
+    }
+    else
+    {
         std::cout << "No existe esa bicicleta.\n";
     }
 }
 
-void Sistema::eliminarBicicleta() {
+void Sistema::eliminarBicicleta()
+{
     int id;
-    std::cout << "ID a eliminar: "; 
-    if (!(std::cin >> id)) {
-        std::cin.clear(); std::cin.ignore(10000, '\n');
-        std::cout << "Error: El ID debe ser un numero.\n";
+    std::cout << "ID a eliminar: ";
+    std::cin >> id;
+
+    if (arbolBicis.eliminar(id))
+    {
+        std::cout << "Bicicleta eliminada.\n";
+    }
+    else
+    {
+        std::cout << "No existe esa bicicleta.\n";
+    }
+}
+
+// MENU VIAJES (modulo B)
+void Sistema::menuViajes()
+{
+    int opcion = -1;
+
+    while (opcion != 0)
+    {
+        std::cout << "\nMENU VIAJES\n";
+        std::cout << "1. Cantidad de viajes por estacion y rango de fechas\n";
+        std::cout << "2. Viajes de un usuario (DNI)\n";
+        std::cout << "3. Bicicletas con mas de X km (enviar a revision)\n";
+        std::cout << "4. Retirar bicicleta (cola de espera)\n";
+        std::cout << "5. Devolver bicicleta\n";
+        std::cout << "6. Enviar bicicleta averiada al taller\n";         // NUEVO (B5)
+        std::cout << "7. Extraer la bicicleta mas urgente del taller\n"; // NUEVO (B5)
+        std::cout << "0. Volver al Menu Principal\n";
+        std::cout << "Opcion: ";
+        std::cin >> opcion;
+
+        switch (opcion)
+        {
+        case 1:
+            contarViajesEstacion();
+            break;
+
+        case 2:
+            buscarViajesUsuario();
+            break;
+
+        case 3:
+            listarBicisMasDeKm();
+            break;
+
+        case 4:
+            retirarBici();
+            break;
+
+        case 5:
+            devolverBici();
+            break;
+
+        case 6: // NUEVO (B5)
+            enviarATaller();
+            break;
+
+        case 7: // NUEVO (B5)
+            atenderTaller();
+            break;
+
+        case 0:
+            break;
+
+        default:
+            std::cout << "Opcion invalida!\n";
+        }
+    }
+}
+
+void Sistema::contarViajesEstacion()
+{
+    std::string codigo;
+    int desde, hasta;
+    std::cout << "Estacion de origen: ";
+    std::cin >> codigo;
+    std::cout << "Fecha desde (AAAAMMDD): ";
+    std::cin >> desde;
+    std::cout << "Fecha hasta (AAAAMMDD): ";
+    std::cin >> hasta;
+    int total = listaViajes.contarViajesPorEstacion(codigo, desde, hasta);
+    std::cout << "Viajes encontrados: " << total << "\n";
+}
+
+void Sistema::buscarViajesUsuario()
+{
+    int dni;
+    std::cout << "DNI: ";
+    std::cin >> dni;
+    int minutos = listaViajes.mostrarViajesPorUsuario(dni);
+    std::cout << "Total de minutos pedaleados: " << minutos << "\n";
+}
+
+// B3: bicis con mas de X km, para enviarlas a revision
+void Sistema::listarBicisMasDeKm()
+{
+    int x;
+    std::cout << "Kilometros minimos (X): ";
+    std::cin >> x;
+    int total = arbolBicis.listarMasDeKm(x);
+    if (total == 0)
+    {
+        std::cout << "No hay bicicletas con mas de " << x << " km.\n";
+    }
+    else
+    {
+        std::cout << "Bicicletas para revision: " << total << "\n";
+    }
+}
+
+// B4: retirar una bici; si no hay disponibles, el usuario entra en la cola de espera
+void Sistema::retirarBici()
+{
+    std::string codigo;
+    int dni;
+    std::cout << "Estacion: ";
+    std::cin >> codigo;
+    std::cout << "DNI del usuario: ";
+    std::cin >> dni;
+
+    Estacion *e = tablaEstaciones.buscar(codigo);
+    if (e == nullptr)
+    {
+        std::cout << "No existe esa estacion.\n";
         return;
     }
-    std::cin.ignore(10000, '\n');
 
-    if (arbolBicis.eliminar(id)) {
-        std::cout << "Bicicleta eliminada.\n";
-    } else {
-        std::cout << "No existe esa bicicleta.\n";
+    if (e->getBicisDisponibles() > 0)
+    {
+        e->setBicisDisponibles(e->getBicisDisponibles() - 1);
+        std::cout << "Bicicleta retirada. Quedan " << e->getBicisDisponibles() << " disponibles.\n";
+    }
+    else
+    {
+        int posicion = gestorColas.encolarUsuario(codigo, dni);
+        if (posicion == 0)
+        {
+            std::cout << "Ese DNI ya esta en la cola de espera de la estacion.\n";
+        }
+        else
+        {
+            std::cout << "No hay bicicletas disponibles. DNI " << dni
+                      << " en cola de espera, posicion " << posicion << ".\n";
+        }
     }
 }
 
-// MENU Redistribucion 
-void Sistema::menuRedistribucion() {
+// B4: al devolver una bici, si hay cola se asigna al primero; si no, queda en la estacion
+void Sistema::devolverBici()
+{
+    std::string codigo;
+    std::cout << "Estacion donde se devuelve: ";
+    std::cin >> codigo;
+
+    Estacion *e = tablaEstaciones.buscar(codigo);
+    if (e == nullptr)
+    {
+        std::cout << "No existe esa estacion.\n";
+        return;
+    }
+
+    int dniAsignado;
+    if (gestorColas.atenderSiguiente(codigo, dniAsignado))
+    {
+        std::cout << "Bicicleta asignada al DNI " << dniAsignado
+                  << " (primero de la cola de espera).\n";
+    }
+    else if (e->getBicisDisponibles() >= e->getCapacidadAnclajes())
+    {
+        std::cout << "La estacion esta llena, no hay anclajes libres.\n";
+    }
+    else
+    {
+        e->setBicisDisponibles(e->getBicisDisponibles() + 1);
+        std::cout << "Bicicleta devuelta. Ahora hay " << e->getBicisDisponibles() << " disponibles.\n";
+    }
+}
+
+// NUEVO (B5): solo las bicis averiadas entran al taller; las electricas siempre con prioridad 1
+void Sistema::enviarATaller()
+{
+    int id;
+    std::cout << "ID de la bicicleta: ";
+    std::cin >> id;
+
+    const Bicicleta *b = arbolBicis.buscar(id);
+    if (b == nullptr)
+    {
+        std::cout << "No existe esa bicicleta.\n";
+        return;
+    }
+    if (!b->estaAveriada())
+    {
+        std::cout << "La bicicleta no esta averiada, no va al taller.\n";
+        return;
+    }
+
+    int prioridad = 1;
+    if (b->getTipo() != "Electrica") // SUPUESTO: getTipo() devuelve std::string
+    {
+        do
+        {
+            std::cout << "Prioridad (1 = mas urgente, 3 = menos urgente): ";
+            std::cin >> prioridad;
+        } while (prioridad < 1 || prioridad > 3);
+    }
+    else
+    {
+        std::cout << "Bicicleta electrica: prioridad 1 automatica.\n";
+    }
+
+    tallerReparaciones.insertar(id, prioridad);
+    std::cout << "Bicicleta " << id << " enviada al taller con prioridad " << prioridad << ".\n";
+}
+
+// NUEVO (B5): extrae la bici mas urgente del taller
+void Sistema::atenderTaller()
+{
+    ElementoTaller e;
+    if (tallerReparaciones.extraerMasUrgente(e))
+    {
+        std::cout << "Sale del taller la bicicleta " << e.biciId
+                  << " (prioridad " << e.prioridad << ").\n";
+    }
+    else
+    {
+        std::cout << "El taller no tiene bicicletas en espera.\n";
+    }
+}
+
+// MENU Redistribucion
+void Sistema::menuRedistribucion()
+{
     int C;
     std::cout << "\nREDISTRIBUCION DE BICICLETAS\n";
     std::cout << "Ingrese la capacidad del camion: ";
@@ -340,30 +592,23 @@ void Sistema::menuRedistribucion() {
     std::cout << "Ingrese la cantidad de estaciones con faltante: ";
     std::cin >> n;
 
-    if (n <= 0) {
+    if (n <= 0)
+    {
         std::cout << "Cantidad invalida.\n";
         return;
     }
 
-    FaltanteEstacion* estaciones = new FaltanteEstacion[n];
-    
-    for (int i = 0; i < n; i++) {
+    FaltanteEstacion *estaciones = new FaltanteEstacion[n];
+
+    for (int i = 0; i < n; i++)
+    {
         std::cout << "Estacion " << (i + 1) << " - Codigo: ";
         std::cin >> estaciones[i].codigo;
-
-        // --- VALIDACIÓN DEL INVARIANTE ---
-        do {
-            std::cout << "Estacion " << (i + 1) << " - Faltante (debe ser >= 0): ";
-            std::cin >> estaciones[i].faltante;
-            if (estaciones[i].faltante < 0) {
-                std::cout << "Error: El faltante no puede ser negativo.\n";
-            }
-        } while (estaciones[i].faltante < 0);
-        // ---------------------------------
-        
+        std::cout << "Estacion " << (i + 1) << " - Faltante: ";
+        std::cin >> estaciones[i].faltante;
     }
     Redistribuidor redistribuidor(C);
-    
+
     redistribuidor.buscarSubconjuntos(estaciones, n);
 
     // Limpiamos memoria
