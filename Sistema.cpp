@@ -264,7 +264,15 @@ void Sistema::menuBicicletas()
         std::cout << "6. Eliminar por ID\n";
         std::cout << "0. Volver al Menu Principal\n";
         std::cout << "Opcion: ";
-        std::cin >> opcion;
+
+        if (!(std::cin >> opcion)) {
+            std::cin.clear(); 
+            std::cin.ignore(10000, '\n');
+            std::cout << "Error: Ingrese un numero valido.\n";
+            opcion = -1;
+            continue;
+        }
+        std::cin.ignore(10000, '\n'); // Limpieza del Enter
 
         switch (opcion)
         {
@@ -301,67 +309,73 @@ void Sistema::menuBicicletas()
     }
 }
 
-// ops menu bicicletas
-void Sistema::insertarBicicleta()
-{
+// ops menu bicicletas con invalidaciones de entrada
+void Sistema::insertarBicicleta() {
     int id, km;
     std::string cod, tipo, estado;
 
-    std::cout << "ID (numero): ";
-    std::cin >> id;
-    std::cout << "Estacion: ";
-    std::cin >> cod;
-    std::cout << "Tipo (Mecanica/Electrica): ";
-    std::cin >> tipo;
-    std::cout << "Estado (OK/Averiada): ";
-    std::cin >> estado;
-    std::cout << "Kilometros (numero): ";
-    std::cin >> km;
+    std::cout << "ID (numero): "; 
+    if (!(std::cin >> id)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: El ID debe ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
+
+    std::cout << "Estacion: "; std::cin >> cod;
+    std::cout << "Tipo (Mecanica/Electrica): "; std::cin >> tipo;
+    std::cout << "Estado (OK/Averiada): "; std::cin >> estado;
+    
+    std::cout << "Kilometros (numero): "; 
+    if (!(std::cin >> km)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: Los km deben ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
 
     Bicicleta b(id, cod, tipo, estado, km);
-    if (arbolBicis.insertar(b))
-    {
+    if (arbolBicis.insertar(b)) {
         std::cout << "Bicicleta insertada.\n";
-    }
-    else
-    {
+    } else {
         std::cout << "Ya existe una bicicleta con ese ID.\n";
     }
 }
 
-void Sistema::buscarBicicleta()
-{
+void Sistema::buscarBicicleta() {
     int id;
-    std::cout << "ID a buscar: ";
-    std::cin >> id;
+    std::cout << "ID a buscar: "; 
+    if (!(std::cin >> id)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: El ID debe ser un numero.\n";
+        return;
+    }
+    std::cin.ignore(10000, '\n');
 
-    const Bicicleta *b = arbolBicis.buscar(id);
-    if (b != nullptr)
-    {
+    const Bicicleta* b = arbolBicis.buscar(id);
+    if (b != nullptr) {
         b->mostrar();
-    }
-    else
-    {
+    } else {
         std::cout << "No existe esa bicicleta.\n";
     }
 }
 
-void Sistema::eliminarBicicleta()
-{
+void Sistema::eliminarBicicleta() {
     int id;
-    std::cout << "ID a eliminar: ";
-    std::cin >> id;
-
-    if (arbolBicis.eliminar(id))
-    {
-        std::cout << "Bicicleta eliminada.\n";
+    std::cout << "ID a eliminar: "; 
+    if (!(std::cin >> id)) {
+        std::cin.clear(); std::cin.ignore(10000, '\n');
+        std::cout << "Error: El ID debe ser un numero.\n";
+        return;
     }
-    else
-    {
+    std::cin.ignore(10000, '\n');
+
+    if (arbolBicis.eliminar(id)) {
+        std::cout << "Bicicleta eliminada.\n";
+    } else {
         std::cout << "No existe esa bicicleta.\n";
     }
 }
-
 // MENU VIAJES (modulo B)
 void Sistema::menuViajes()
 {
