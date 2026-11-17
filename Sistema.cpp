@@ -1,7 +1,56 @@
 #include "Sistema.h"
 #include <iostream>
 #include <fstream>
+#include <limits>
+#include <cstdio>
 #include "Estacion.h"
+
+// ---------------------------------------------------------------
+// Lectura segura de la entrada (usada por el Menu Viajes, punto B)
+// Invariante: todo numero ingresado es un entero valido.
+// Rechaza letras, simbolos y cosas como "12abc", y evita que cin
+// quede en estado de error (que provocaba un bucle infinito).
+// ---------------------------------------------------------------
+static int leerEntero(const std::string &mensaje)
+{
+    int valor;
+    while (true)
+    {
+        std::cout << mensaje;
+        if (std::cin >> valor)
+        {
+            // ignora espacios al final y acepta solo si la linea termina ahi
+            while (std::cin.peek() == ' ' || std::cin.peek() == '\t')
+                std::cin.get();
+            int siguiente = std::cin.peek();
+            if (siguiente == '\n' || siguiente == EOF)
+            {
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                return valor;
+            }
+        }
+        if (std::cin.eof())
+            return 0; // fin de la entrada: evita un bucle infinito
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Entrada invalida. Ingrese un numero entero.\n";
+    }
+}
+
+// Invariante del DNI: numero de 7 u 8 digitos
+static int leerDni()
+{
+    int dni;
+    do
+    {
+        dni = leerEntero("DNI: ");
+        if (std::cin.eof())
+            return 0;
+        if (dni < 1000000 || dni > 99999999)
+            std::cout << "DNI invalido. Debe tener 7 u 8 digitos.\n";
+    } while (dni < 1000000 || dni > 99999999);
+    return dni;
+}
 
 Sistema::Sistema() : tablaEstaciones(101)
 {
@@ -375,11 +424,10 @@ void Sistema::menuViajes()
         std::cout << "3. Bicicletas con mas de X km (enviar a revision)\n";
         std::cout << "4. Retirar bicicleta (cola de espera)\n";
         std::cout << "5. Devolver bicicleta\n";
-        std::cout << "6. Enviar bicicleta averiada al taller\n";         // NUEVO (B5)
-        std::cout << "7. Extraer la bicicleta mas urgente del taller\n"; // NUEVO (B5)
+        std::cout << "6. Enviar bicicleta averiada al taller\n";
+        std::cout << "7. Extraer la bicicleta mas urgente del taller\n";
         std::cout << "0. Volver al Menu Principal\n";
-        std::cout << "Opcion: ";
-        std::cin >> opcion;
+        opcion = leerEntero("Opcion: ");
 
         switch (opcion)
         {
@@ -403,11 +451,11 @@ void Sistema::menuViajes()
             devolverBici();
             break;
 
-        case 6: // NUEVO (B5)
+        case 6:
             enviarATaller();
             break;
 
-        case 7: // NUEVO (B5)
+        case 7:
             atenderTaller();
             break;
 
@@ -423,22 +471,17 @@ void Sistema::menuViajes()
 void Sistema::contarViajesEstacion()
 {
     std::string codigo;
-    int desde, hasta;
     std::cout << "Estacion de origen: ";
     std::cin >> codigo;
-    std::cout << "Fecha desde (AAAAMMDD): ";
-    std::cin >> desde;
-    std::cout << "Fecha hasta (AAAAMMDD): ";
-    std::cin >> hasta;
+    int desde = leerEntero("Fecha desde (AAAAMMDD): ");
+    int hasta = leerEntero("Fecha hasta (AAAAMMDD): ");
     int total = listaViajes.contarViajesPorEstacion(codigo, desde, hasta);
     std::cout << "Viajes encontrados: " << total << "\n";
 }
 
 void Sistema::buscarViajesUsuario()
 {
-    int dni;
-    std::cout << "DNI: ";
-    std::cin >> dni;
+    int dni = leerDni();
     int minutos = listaViajes.mostrarViajesPorUsuario(dni);
     std::cout << "Total de minutos pedaleados: " << minutos << "\n";
 }
@@ -446,9 +489,7 @@ void Sistema::buscarViajesUsuario()
 // B3: bicis con mas de X km, para enviarlas a revision
 void Sistema::listarBicisMasDeKm()
 {
-    int x;
-    std::cout << "Kilometros minimos (X): ";
-    std::cin >> x;
+    int x = leerEntero("Kilometros minimos (X): ");
     int total = arbolBicis.listarMasDeKm(x);
     if (total == 0)
     {
@@ -464,11 +505,9 @@ void Sistema::listarBicisMasDeKm()
 void Sistema::retirarBici()
 {
     std::string codigo;
-    int dni;
     std::cout << "Estacion: ";
     std::cin >> codigo;
-    std::cout << "DNI del usuario: ";
-    std::cin >> dni;
+    int dni = leerDni();
 
     Estacion *e = tablaEstaciones.buscar(codigo);
     if (e == nullptr)
@@ -528,12 +567,10 @@ void Sistema::devolverBici()
     }
 }
 
-// NUEVO (B5): solo las bicis averiadas entran al taller; las electricas siempre con prioridad 1
+// B5: solo las bicis averiadas entran al taller; las electricas siempre con prioridad 1
 void Sistema::enviarATaller()
 {
-    int id;
-    std::cout << "ID de la bicicleta: ";
-    std::cin >> id;
+    int id = leerEntero("ID de la bicicleta: ");
 
     const Bicicleta *b = arbolBicis.buscar(id);
     if (b == nullptr)
@@ -548,13 +585,17 @@ void Sistema::enviarATaller()
     }
 
     int prioridad = 1;
-    if (b->getTipo() != "Electrica") // SUPUESTO: getTipo() devuelve std::string
+    if (b->getTipo() != "Electrica")
     {
         do
         {
-            std::cout << "Prioridad (1 = mas urgente, 3 = menos urgente): ";
-            std::cin >> prioridad;
-        } while (prioridad < 1 || prioridad > 3);
+            prioridad = leerEntero("Prioridad (1 = mas urgente, 3 = menos urgente): ");
+        } while ((prioridad < 1 || prioridad > 3) && !std::cin.eof());
+
+        if (prioridad < 1 || prioridad > 3)
+        {
+            return; // fin de la entrada sin una prioridad valida
+        }
     }
     else
     {
@@ -565,7 +606,7 @@ void Sistema::enviarATaller()
     std::cout << "Bicicleta " << id << " enviada al taller con prioridad " << prioridad << ".\n";
 }
 
-// NUEVO (B5): extrae la bici mas urgente del taller
+// B5: extrae la bici mas urgente del taller
 void Sistema::atenderTaller()
 {
     ElementoTaller e;
