@@ -34,3 +34,4 @@ Se implementó la eliminación de un nodo en el árbol contemplando correctament
 * Nodo con un solo hijo: Se "saltea" el nodo a eliminar, conectando el padre del nodo eliminado directamente con el hijo único (izquierdo o derecho).
 
 * Nodo con dos hijos: Se busca el sucesor inorder (el nodo con el ID más pequeño dentro del subárbol derecho). Se copia el dato de ese sucesor al nodo que queremos eliminar, y luego se procede a eliminar el sucesor (que, por definición, tendrá a lo sumo un hijo derecho, cayendo en el caso 1 o 2).
+

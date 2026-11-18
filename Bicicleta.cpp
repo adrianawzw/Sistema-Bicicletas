@@ -2,7 +2,7 @@
 #include "Bicicleta.h"
 #include <iostream>
 
-// Constructor por defecto: le ponemos valores válidos por defecto
+// Constructor por defecto con valores válidos por defecto
 Bicicleta::Bicicleta()
     : biciId(0), codigoEstacion(""), tipo("Mecanica"), estado("OK"), kilometros(0) {}
 

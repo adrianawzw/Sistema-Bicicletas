@@ -11,6 +11,7 @@ private:
     NodoArbolBici *raiz;
     int cantidadNodos;
 
+    // Funciones recursivas privadas
     NodoArbolBici *insertarRec(NodoArbolBici *nodo, const Bicicleta &bici, bool &insertado);
     NodoArbolBici *buscarRec(NodoArbolBici *nodo, int id) const;
     void inorderRec(NodoArbolBici *nodo) const;
@@ -18,6 +19,7 @@ private:
     int alturaRec(NodoArbolBici *nodo) const;
     void liberarRec(NodoArbolBici *nodo);
     NodoArbolBici *eliminarRec(NodoArbolBici *nodo, int id, bool &eliminado);
+    // Función auxiliar para encontrar el nodo con el valor mínimo en un subárbol
     NodoArbolBici *minimoNodo(NodoArbolBici *nodo) const;
     int listarMasDeKmRec(NodoArbolBici *nodo, int x) const; // NUEVO (B3)
 
@@ -25,10 +27,11 @@ public:
     ArbolBicicletas();
     ~ArbolBicicletas();
 
-    // Evitamos copias accidentales del árbol
+    // Evitar copias accidentales del árbol 
     ArbolBicicletas(const ArbolBicicletas &) = delete;
     ArbolBicicletas &operator=(const ArbolBicicletas &) = delete;
 
+    // Funciones públicas
     bool insertar(const Bicicleta &bici);
     Bicicleta *buscar(int id);
     const Bicicleta *buscar(int id) const;
